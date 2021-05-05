@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "388304907566",
+    "project_id": "safor-65c53",
+    "storage_bucket": "safor-65c53.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:388304907566:android:1a5964b2c4fbae66989ebf",
+        "android_client_info": {
+          "package_name": "com.isvisoft.safor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "388304907566-q28ju9kebd2lfcjoiamev6mfta5v8ntr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpmTK2EpnidW6zfL7QlxRYx2xb7T8kUQ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "388304907566-q28ju9kebd2lfcjoiamev6mfta5v8ntr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
