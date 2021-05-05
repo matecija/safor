@@ -62,8 +62,8 @@ class _CalendarTableState extends State<CalendarTable> {
     super.dispose();
   }
 
-  List<Event> retrievedData = [];
-
+  dynamic retrievedData ;
+/*
   Future _getEvents() async{
      var collectionReferece = await FirebaseFirestore.instance.collection('reservas');
      collectionReferece.get().then((collectionSnapshot){
@@ -71,16 +71,28 @@ class _CalendarTableState extends State<CalendarTable> {
      });
      print(retrievedData);
    }
+*/
 
+  Future<dynamic> _getEvents() async {
+
+    final DocumentReference document =   FirebaseFirestore.instance.collection("listofprods").doc('ac1');
+
+    await document.get().then<dynamic>(( DocumentSnapshot snapshot) async{
+      setState(() {
+        retrievedData =snapshot.data;
+      });
+    });
+    print(retrievedData);
+  }
 
   List<Event> _getEventsForDay(DateTime day) {
 
     List<Event> listeventday = [];
-    for(Event e in retrievedData){
+   /* for(Event e in retrievedData){
       if(e.day.day == day.day){
         listeventday.add(e);
       }
-    }
+    }*/
   return listeventday;
   }
 
