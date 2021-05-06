@@ -1,42 +1,20 @@
-// Copyright 2019 Aleksander Woźniak
-// SPDX-License-Identifier: Apache-2.0
+import 'package:intl/intl.dart';
 
-import 'dart:collection';
-
-import 'package:table_calendar/table_calendar.dart';
-
-/// Example event class.
 class Event {
-  final String title;
+
+  final String name;
   final String description;
   final DateTime day;
   final DateTime start;
   final DateTime end;
 
-  const Event(this.title,this.description,this.day,this.start,this.end);
-
-  String getCompleteInfo() => ("Title: $title, Description: $description, Start: $start, End: $end");
+  const Event(this.name,this.description,this.day,this.start,this.end);
 
   @override
-  String toString() => title;
+  String toString() => ("Title: $name, Description: $description,"
+      " Start: "+ DateFormat("HH:mm").format(start)+", End:"+ DateFormat("HH:mm").format(end));
 }
-/*
-final kEvents = LinkedHashMap<DateTime, List<Event>>(
-  equals: isSameDay,
-  hashCode: getHashCode,
-)..addAll(_kEventSource);
 
-final _kEventSource = Map.fromIterable(List.generate(50, (index) => index),
-    key: (item) => DateTime.utc(2020, 10, item * 5),
-    value: (item) => List.generate(
-        item % 4 + 1, (index) => Event('Event $item | ${index + 1}')))
-  ..addAll({
-    DateTime.now(): [
-      Event('Today\'s Event 1'),
-      Event('Today\'s Event 2'),
-    ],
-  });
-*/
 int getHashCode(DateTime key) {
   return key.day * 1000000 + key.month * 10000 + key.year;
 }

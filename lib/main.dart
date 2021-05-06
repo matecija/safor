@@ -1,6 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'LoginDialog.dart';
+import 'RegisterDialog.dart';
+import 'ReservarDialog.dart';
 import 'constants.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -10,9 +15,11 @@ void main() {
   runApp(MyApp());
 }
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
       home: FutureBuilder(
         // Initialize FlutterFire
         future: Firebase.initializeApp(),
@@ -42,10 +49,16 @@ class CalendarTable extends StatefulWidget {
 
 class _CalendarTableState extends State<CalendarTable> {
 
+
+
+
   late final ValueNotifier<List<Event>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  List<Event> retrievedData  = [];
+  User? currentUser;
+
 
   @override
   void initState() {
@@ -55,44 +68,45 @@ class _CalendarTableState extends State<CalendarTable> {
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
   }
 
-
   @override
   void dispose() {
     _selectedEvents.dispose();
     super.dispose();
   }
 
-  dynamic retrievedData ;
-/*
-  Future _getEvents() async{
-     var collectionReferece = await FirebaseFirestore.instance.collection('reservas');
-     collectionReferece.get().then((collectionSnapshot){
-       retrievedData = collectionSnapshot.docs.toList();
-     });
-     print(retrievedData);
-   }
-*/
-
   Future<dynamic> _getEvents() async {
+    print("getevents start");
+    await for (var snapshot in FirebaseFirestore.instance.collection('reservas').snapshots()) {
+      for (var message in snapshot.docs) {
+        try{
+          print("Firebase Data -> ${message.data()}");
 
-    final DocumentReference document =   FirebaseFirestore.instance.collection("listofprods").doc('ac1');
+          retrievedData.add(Event(message['name'],
+              message['description'],
+              (message['day'] as Timestamp).toDate().toUtc(),
+              (message['start'] as Timestamp).toDate(),
+              (message['end'] as Timestamp).toDate()));
 
-    await document.get().then<dynamic>(( DocumentSnapshot snapshot) async{
-      setState(() {
-        retrievedData =snapshot.data;
-      });
-    });
-    print(retrievedData);
+        }catch(e){
+          print("--- Error! : $e");
+        }
+
+      }
+      print("Retrieved events Data: ");
+      print(retrievedData);
+      setState(() {});
+    }
   }
 
   List<Event> _getEventsForDay(DateTime day) {
-
-    List<Event> listeventday = [];
-   /* for(Event e in retrievedData){
-      if(e.day.day == day.day){
+  List<Event>  listeventday=[];
+    for(Event e in retrievedData ){
+      if(e.day.day == day.day &&
+        e.day.month == day.month &&
+        e.day.year == day.year)
         listeventday.add(e);
-      }
-    }*/
+    }
+
   return listeventday;
   }
 
@@ -111,6 +125,19 @@ class _CalendarTableState extends State<CalendarTable> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Reservas Safor"),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            if(currentUser == null) LoginDialog().buildDialog(context, this, currentUser),
+            if(currentUser == null) RegisterDialog().buildDialog(context, this, currentUser),
+            if(currentUser != null) ReservarDialog().buildDialog(context, this, currentUser!),
+          ],
+        ),
+      ),
+
       body: Column(
         children: [
           TableCalendar<Event>(
@@ -137,27 +164,34 @@ class _CalendarTableState extends State<CalendarTable> {
             },
           ),
           const SizedBox(height: 8.0),
-
-/*
-          StreamBuilder(
-            stream: Firestore.instance.collection('reservas').snapshots(),
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot){
-              if(!snapshot.hasData){
-                return Center(child: CircularProgressIndicator(),);
-              }else{
-
-                return ListView(
-                  children: snapshot.data!.documents.map((document) {
-                    return Center(
-                      child: Container(
-                        child: Text("Title:"+ document['title']),
-                      ),
-                    );
-                  }).toList(),
+          Expanded(
+            child: ValueListenableBuilder<List<Event>>(
+              valueListenable: _selectedEvents,
+              builder: (context, value, _) {
+                return ListView.builder(
+                  itemCount: value.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                        child: Padding(
+                          padding : EdgeInsets.fromLTRB(16, 16, 16, 16),
+                          child: SizedBox(
+                            //height: 60.0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(value[index].name),
+                                Text(value[index].description),
+                                Text("Reservado de "+ DateFormat("HH:mm").format(value[index].start)+ " a "+ DateFormat("HH:mm").format(value[index].end)),
+                                ],
+                              )
+                          ),
+                        )
+                      );
+                  },
                 );
-              }
-            }
-          ),*/
+              },
+            ),
+          ),
         ],
       ),
     );
