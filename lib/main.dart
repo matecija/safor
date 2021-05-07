@@ -43,13 +43,12 @@ class MyApp extends StatelessWidget {
 
 
 class CalendarTable extends StatefulWidget {
+
   @override
   _CalendarTableState createState() => _CalendarTableState();
 }
 
 class _CalendarTableState extends State<CalendarTable> {
-
-
 
 
   late final ValueNotifier<List<Event>> _selectedEvents;
@@ -83,7 +82,7 @@ class _CalendarTableState extends State<CalendarTable> {
 
           retrievedData.add(Event(message['name'],
               message['description'],
-              (message['day'] as Timestamp).toDate().toUtc(),
+              (message['day'] as Timestamp).toDate(),
               (message['start'] as Timestamp).toDate(),
               (message['end'] as Timestamp).toDate()));
 
@@ -122,6 +121,8 @@ class _CalendarTableState extends State<CalendarTable> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,6 +135,7 @@ class _CalendarTableState extends State<CalendarTable> {
             if(currentUser == null) LoginDialog().buildDialog(context, this, currentUser),
             if(currentUser == null) RegisterDialog().buildDialog(context, this, currentUser),
             if(currentUser != null) ReservarDialog().buildDialog(context, this, currentUser!),
+           // ReservarDialog().buildDialog(context, this),
           ],
         ),
       ),

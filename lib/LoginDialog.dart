@@ -1,7 +1,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:safor/services/auth.dart';
+import 'package:safor/services/services.dart';
 
 class LoginDialog extends AlertDialog{
 
@@ -42,18 +42,21 @@ class LoginDialog extends AlertDialog{
                           ElevatedButton(
                               child: Text('Login'),
                               onPressed: () async {
-                                User result = await _authService.signIn(email: useremail.text, password: password.text);
-                                if(result == null){
-                                  print("Error signing in");
-                                }else{
-                                  print("signed in as:");
-                                  state.setState((){
-                                    user = result;
-                                    print(user);
-                                  });
-                                  Navigator.pop(context);
-                                }
+                                try{
+                                  User result = await _authService.signIn(email: useremail.text, password: password.text);
+                                  if(result == null){
+                                    print("Error loging in");
+                                  }else{
+                                    state.setState((){
+                                      user = result;
+                                      print(user);
+                                    });
+                                    Navigator.pop(context);
+                                  }
 
+                                }catch(e) {
+                                  print(e);
+                                }
                               }
                               )
                         ],

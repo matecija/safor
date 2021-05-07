@@ -11,8 +11,8 @@ class Event {
   const Event(this.name,this.description,this.day,this.start,this.end);
 
   @override
-  String toString() => ("Title: $name, Description: $description,"
-      " Start: "+ DateFormat("HH:mm").format(start)+", End:"+ DateFormat("HH:mm").format(end));
+  String toString() => ("( Title: $name, Description: $description, Day: " +DateFormat("dd:MM:yyyy").format(day)+
+      " Start: "+ DateFormat("HH:mm").format(start)+", End:"+ DateFormat("HH:mm").format(end) +")");
 }
 
 int getHashCode(DateTime key) {
