@@ -51,8 +51,13 @@ class AuthService{
           email: email,
           password: password
       );
-      userCredential.user!.updateProfile(displayName: name, photoURL: null);
-      return userCredential.user;
+      await userCredential.user!.updateProfile(displayName: name, photoURL: null);
+
+      UserCredential userCredential2 = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password
+      );
+      return userCredential2.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
