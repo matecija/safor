@@ -15,7 +15,13 @@ class AppModel extends Model{
     try{
       User result = await _authService.signIn(email: email, password:passwd);
       if(result == null){
-        print("Error loging in");
+
+        Fluttertoast.showToast(
+            msg: "Credenciales incorrectas.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            fontSize: 16.0
+        );
 
       }else{
         currentUser = result;
@@ -37,34 +43,50 @@ class AppModel extends Model{
 
       if(desc.isEmpty) {
         Fluttertoast.showToast(
-            msg: "Description missing!",
+            msg: "Falta descripción de la reserva.",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             fontSize: 16.0
         );
       } else if(start.isAfter(end)){
         Fluttertoast.showToast(
-            msg: "Error, start time is after end time",
+            msg: "Error, la reserva comienza después del tiempo de finalización.",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             fontSize: 16.0
         );
       }else{
 
-        for(Event e in retrievedData){
-          if(e.day == day &&
+        // If start or end time given is inside the range of any other event form same day
+        for(Event e in retrievedData) {
+          if (e.day == day &&
+              (start.hour >= e.start.hour && start.hour <= e.end.hour) ||
+              (end.hour >= e.start.hour && end.hour <= e.end.hour)) {
+            Fluttertoast.showToast(
+                msg: "Error, la reserva se sobrepone a una existente",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                fontSize: 16.0
+            );
 
-          )
+            return false;
+          }
         }
 
+          _firestore.addReserva(
+              day, start, end,currentUser!.displayName!,
+              desc);
 
-        _firestore.addReserva(
-            day, start, end,currentUser!.displayName!,
-            desc);
-        print("Reserva añadida con exito.");
-        notifyListeners();
+          Fluttertoast.showToast(
+              msg: "Reserva añadida con éxtio",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              fontSize: 16.0
+          );
+          notifyListeners();
+          return true;
 
-        return true;
+
       }
     } catch (e) {
       print(e.toString());
@@ -77,9 +99,19 @@ class AppModel extends Model{
     try{
       User result = await _authService.register(email: email, password: passwd, name: name);
       if(result == null){
-        print("Error registering user");
+        Fluttertoast.showToast(
+            msg: "Error registrando usuario!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            fontSize: 16.0
+        );
       }else {
-        print("Registration complete, signed in as");
+        Fluttertoast.showToast(
+            msg: "Registro completado.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            fontSize: 16.0
+        );
         currentUser = result;
         print(currentUser);
         notifyListeners();
@@ -95,7 +127,7 @@ class AppModel extends Model{
   Future<bool> logoutModelFunc()async {
     try{
       currentUser = null;
-      print("Log out complete");
+
       notifyListeners();
       return true;
     }catch(e){

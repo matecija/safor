@@ -205,13 +205,7 @@ class _CalendarTableState extends State<CalendarTable> {
                         alignment: Alignment.centerLeft,
                         child: Image.network("https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"),
                       ),
-                      
-                      if(model.currentUser == null)Align(
-                        alignment: Alignment.centerLeft,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.blue,
-                        ),
-                      ),
+
 
                       if(model.currentUser != null)
                         Container(
@@ -236,7 +230,7 @@ class _CalendarTableState extends State<CalendarTable> {
                 if(model.currentUser == null) RegisterDialog().buildDialog(context, this, model.currentUser),
                 if(model.currentUser != null) ReservarDialog().buildDialog(context, this, model.currentUser!,retrievedData),
                 if(model.currentUser != null) ListTile(
-                  title: Text("Sign out"),
+                  title: Text("Salir"),
                   onTap: () {
                     model.logoutModelFunc();
                   },
