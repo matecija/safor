@@ -18,6 +18,17 @@ class FirestoreService{
 
   }
 
+  Future<bool> removeReserva(String id )async {
+    try{
+      CollectionReference reservas = _firestore.collection('reservas');
+      reservas.doc(id).delete();
+      return true;
+    }catch(e){
+      print(e.toString());
+    }
+    return false;
+  }
+
 }
 
 

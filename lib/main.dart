@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:safor/services/model.dart';
 import 'LoginDialog.dart';
@@ -102,7 +103,9 @@ class _CalendarTableState extends State<CalendarTable> {
           for (var message in snapshot.docs) {
 
               print("Firebase Data -> ${message.data()}");
-              data.add(Event(message['name'],
+              data.add(Event(
+                  message.id,
+                  message['name'],
                   message['description'],
                   (message['day'] as Timestamp).toDate(),
                   (message['start'] as Timestamp).toDate(),
@@ -203,7 +206,6 @@ class _CalendarTableState extends State<CalendarTable> {
                       Container(
                         height: MediaQuery.of(context).size.height * 0.4,
                         width: MediaQuery.of(context).size.width * 0.4,
-
                         child:  ListView.builder(
                           itemCount: myeventlist.length,
                           itemBuilder: (context, index){
@@ -215,7 +217,100 @@ class _CalendarTableState extends State<CalendarTable> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text(DateFormat("dd/MM/yyyy").format(myeventlist[index].day)),
+
+                                          Row(
+                                            children: [
+
+                                              Text(DateFormat("dd/MM/yyyy").format(myeventlist[index].day)),
+
+                                              GestureDetector(
+                                                onTap: (){
+                                                  showDialog(context: context, builder: (_) => new AlertDialog(
+                                                    title: Text("Borrar reserva?"),
+                                                    content:
+                                                        StatefulBuilder(
+                                                          builder: (context, dialogState) {
+                                                            return  Container(
+                                                              child: Column(
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  Card(
+                                                                      child: Padding(
+                                                                        padding : EdgeInsets.fromLTRB(16, 16, 16, 16),
+                                                                        child: SizedBox(
+                                                                          //height: 60.0,
+                                                                            child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Row(
+                                                                                  children: [
+                                                                                    Text(DateFormat("dd/MM/yyyy").format(myeventlist[index].day)),
+                                                                                  ],
+                                                                                ),
+                                                                                Text(myeventlist[index].description),
+                                                                                Text("Reservado de "+ DateFormat("HH:mm").format(myeventlist[index].start)+ " a "+ DateFormat("HH:mm").format(myeventlist[index].end)),
+
+                                                                                Row(
+                                                                                  children: [
+                                                                                    FlatButton(
+                                                                                        onPressed: () async {
+
+                                                                                          if(await model.borrarReservaModelFunc(myeventlist[index].id)){
+                                                                                            retrievedData.remove(index);
+                                                                                            dialogState((){
+
+                                                                                            });
+                                                                                            Navigator.pop(context);
+                                                                                            Navigator.pop(context);
+
+                                                                                          }else{
+                                                                                            Fluttertoast.showToast(
+                                                                                                msg: "Error borrando reserva.",
+                                                                                                toastLength: Toast.LENGTH_SHORT,
+                                                                                                gravity: ToastGravity.CENTER,
+                                                                                                fontSize: 16.0
+                                                                                            );
+                                                                                            Navigator.pop(context);
+                                                                                          }
+
+                                                                                        },
+                                                                                        child: Text("Borrar")),
+
+
+                                                                                    FlatButton(
+                                                                                        onPressed: (){
+                                                                                          Navigator.pop(context);
+                                                                                        },
+                                                                                        child: Text("Cancelar")),
+
+                                                                                  ],
+                                                                                ),
+                                                                              ],
+                                                                            )
+                                                                        ),
+                                                                      )
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          }
+                                                        ),
+
+
+
+                                                    ),
+                                                  );
+
+                                                },
+                                                child: Container(
+                                                  height: 26,
+                                                  width: 26,
+                                                  child: Icon(Icons.clear),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+
                                           Text(myeventlist[index].description),
                                           Text("Reservado de "+ DateFormat("HH:mm").format(myeventlist[index].start)+ " a "+ DateFormat("HH:mm").format(myeventlist[index].end)),
                                         ],
@@ -234,6 +329,9 @@ class _CalendarTableState extends State<CalendarTable> {
 
                   },
                 ),
+
+
+
 
                 if(model.currentUser != null) ListTile(
                   title: Text("Salir"),

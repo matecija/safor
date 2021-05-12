@@ -95,6 +95,18 @@ class AppModel extends Model{
   }
 
 
+  Future<bool> borrarReservaModelFunc(String id ) async{
+    try {
+      _firestore.removeReserva(id);
+      return true;
+    } catch(e){
+      print(e);
+    }
+    return false;
+  }
+
+
+
   Future<bool> registerModelFunc(String email, String passwd, String name) async{
     try{
       User result = await _authService.register(email: email, password: passwd, name: name);

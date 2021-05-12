@@ -2,16 +2,17 @@ import 'package:intl/intl.dart';
 
 class Event {
 
+  final String id;
   final String name;
   final String description;
   final DateTime day;
   final DateTime start;
   final DateTime end;
 
-  const Event(this.name,this.description,this.day,this.start,this.end);
+  const Event(this.id,this.name,this.description,this.day,this.start,this.end);
 
   @override
-  String toString() => ("( Title: $name, Description: $description, Day: " +DateFormat("dd:MM:yyyy").format(day)+
+  String toString() => ("( Title: $name, Description: $description, Day: " +DateFormat("dd/MM/yyyy").format(day)+
       " Start: "+ DateFormat("HH:mm").format(start)+", End:"+ DateFormat("HH:mm").format(end) +")");
 }
 
