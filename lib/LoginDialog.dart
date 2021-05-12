@@ -38,14 +38,13 @@ class LoginDialog extends AlertDialog{
                                 controller: password,
                                 obscureText: true,
                                 decoration:
-                                InputDecoration(labelText: 'Password', ),
+                                InputDecoration(labelText: 'Contraseña', ),
                               ),
 
                               ElevatedButton(
                                   child: Text('Login'),
                                   onPressed: () async {
                                     if( await model.loginModelFunc(useremail.text, password.text)){
-                                      print("Logged in");
                                       Navigator.pop(context);
                                     }else{
                                       print("Error");

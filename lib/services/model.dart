@@ -59,9 +59,9 @@ class AppModel extends Model{
 
         // If start or end time given is inside the range of any other event form same day
         for(Event e in retrievedData) {
-          if (e.day == day &&
+          if (e.day == day && (
               (start.hour >= e.start.hour && start.hour <= e.end.hour) ||
-              (end.hour >= e.start.hour && end.hour <= e.end.hour)) {
+              (end.hour >= e.start.hour && end.hour <= e.end.hour))) {
             Fluttertoast.showToast(
                 msg: "Error, la reserva se sobrepone a una existente",
                 toastLength: Toast.LENGTH_SHORT,
@@ -134,6 +134,23 @@ class AppModel extends Model{
       print(e.toString());
     }
     return false;
+  }
+
+  List<Event> misreservas(List<Event> retrievedData ) {
+    List<Event> myeventlist=[];
+
+    try{
+      for(Event e in retrievedData){
+        if(e.name == currentUser!.displayName){
+          myeventlist.add(e);
+        }
+      }
+    }catch(e){
+      print(e);
+    }
+
+    return myeventlist;
+
   }
 
 }

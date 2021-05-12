@@ -47,7 +47,7 @@ class ReservarDialog extends AlertDialog{
                             Column(
                               children: <Widget>[
                                 Text(
-                                  'Choose Date',
+                                  'Día',
                                   style: TextStyle(
                                       fontStyle: FontStyle.italic,
                                       fontWeight: FontWeight.w600,
@@ -167,7 +167,7 @@ class ReservarDialog extends AlertDialog{
                             TextFormField(
                               controller: description,
                               decoration:
-                              InputDecoration(labelText: 'Description',),
+                              InputDecoration(labelText: 'Descripción',),
                             ),
 
                             ElevatedButton(

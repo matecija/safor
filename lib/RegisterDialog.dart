@@ -17,7 +17,7 @@ class RegisterDialog extends AlertDialog{
     return ScopedModelDescendant<AppModel>(
         builder: (context,child,model) {
       return ListTile(
-        title: Text('Register'),
+        title: Text('Registrar'),
         onTap: () {
           showDialog(
               context: context,
@@ -40,20 +40,19 @@ class RegisterDialog extends AlertDialog{
                             TextFormField(
                               controller: username,
                               decoration:
-                              InputDecoration(labelText: 'Name'),
+                              InputDecoration(labelText: 'Nombre'),
                             ),
                             TextFormField(
                               controller: password,
                               obscureText: true,
                               decoration:
-                              InputDecoration(labelText: 'Password',),
+                              InputDecoration(labelText: 'Contraseña',),
                             ),
 
                             ElevatedButton(
-                                child: Text('Register'),
+                                child: Text('Registrar'),
                                 onPressed: () async {
                                   if (await model.registerModelFunc(useremail.text, password.text, username.text)){
-                                    print("Register successful");
                                     Navigator.pop(context);
                                   }else{
                                     print("Error registering");

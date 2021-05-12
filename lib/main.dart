@@ -116,40 +116,6 @@ class _CalendarTableState extends State<CalendarTable> {
     }catch (e) {
        e.toString();
     }
-
-
-/*
-    CollectionReference _collectionRef =
-    await FirebaseFirestore.instance.collection('reservas');
-    QuerySnapshot querySnapshot = await _collectionRef.get();
-
-    for(var message in querySnapshot.docs ){
-      data.add(Event(message['name'],
-          message['description'],
-          (message['day'] as Timestamp).toDate(),
-          (message['start'] as Timestamp).toDate(),
-          (message['end'] as Timestamp).toDate()));
-    }
-*/
-
-
-
-
-    /*await for (var snapshot in FirebaseFirestore.instance.collection('reservas').doc) {
-      for (var message in snapshot.docs) {
-        try{
-          print("Firebase Data -> ${message.data()}");
-          data.add(Event(message['name'],
-              message['description'],
-              (message['day'] as Timestamp).toDate(),
-              (message['start'] as Timestamp).toDate(),
-              (message['end'] as Timestamp).toDate()));
-
-        }catch(e){
-          print("--- Error! : $e");
-        }
-      }
-    }*/
   }
 
   List<Event> _getEventsForDay(DateTime day) {
@@ -191,7 +157,7 @@ class _CalendarTableState extends State<CalendarTable> {
 
             child: ListView(
               children: [
-                DrawerHeader(
+                if(model.currentUser != null) DrawerHeader(
 
                   child: Row(
                     children: [
@@ -201,10 +167,6 @@ class _CalendarTableState extends State<CalendarTable> {
                         child: Image.network(model.currentUser!.photoURL!),
                         ),
 
-                      if(model.currentUser != null && model.currentUser!.photoURL == null)Align(
-                        alignment: Alignment.centerLeft,
-                        child: Image.network("https://thumbs.dreamstime.com/b/default-avatar-profile-flat-icon-social-media-user-vector-portrait-unknown-human-image-default-avatar-profile-flat-icon-184330869.jpg"),
-                      ),
 
 
                       if(model.currentUser != null)
@@ -229,12 +191,57 @@ class _CalendarTableState extends State<CalendarTable> {
                 if(model.currentUser == null) LoginDialog().buildDialog(context, this, model.currentUser),
                 if(model.currentUser == null) RegisterDialog().buildDialog(context, this, model.currentUser),
                 if(model.currentUser != null) ReservarDialog().buildDialog(context, this, model.currentUser!,retrievedData),
+
+
+                if(model.currentUser != null) ListTile(
+                  title: Text("Mis reservas"),
+                  onTap: () {
+                    List<Event> myeventlist = model.misreservas(retrievedData);
+                    showDialog(context: context, builder:(_) => new AlertDialog(
+                      title: Text("Mis reservas"),
+                      content:
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        width: MediaQuery.of(context).size.width * 0.4,
+
+                        child:  ListView.builder(
+                          itemCount: myeventlist.length,
+                          itemBuilder: (context, index){
+                            return Card(
+                                child: Padding(
+                                  padding : EdgeInsets.fromLTRB(16, 16, 16, 16),
+                                  child: SizedBox(
+                                    //height: 60.0,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(DateFormat("dd/MM/yyyy").format(myeventlist[index].day)),
+                                          Text(myeventlist[index].description),
+                                          Text("Reservado de "+ DateFormat("HH:mm").format(myeventlist[index].start)+ " a "+ DateFormat("HH:mm").format(myeventlist[index].end)),
+                                        ],
+                                      )
+                                  ),
+                                )
+                            );
+                          },
+                        ),
+                      ),
+
+
+
+                    ));
+
+
+                  },
+                ),
+
                 if(model.currentUser != null) ListTile(
                   title: Text("Salir"),
                   onTap: () {
                     model.logoutModelFunc();
                   },
-                )
+                ),
+
               ],
             ),
           ),
